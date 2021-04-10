@@ -13,16 +13,14 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final SignatureController _controller = SignatureController(
-    penStrokeWidth: 1,
-    penColor: Colors.red,
-    exportBackgroundColor: Colors.blue,
-  );
+  final GestureWhiteboardController _controller = GestureWhiteboardController();
 
   @override
   void initState() {
+    _controller.brushSize = (5);
+    _controller.eraserSize = (25);
+    _controller.brushColor = Color(0XFFFF6666);
     super.initState();
-    _controller.addListener(() => print('Value changed'));
   }
 
   @override
@@ -42,7 +40,6 @@ class _MyAppState extends State<MyApp> {
               Signature(
                 controller: _controller,
                 height: 300,
-                backgroundColor: Colors.lightBlueAccent,
               ),
               //OK AND CLEAR BUTTONS
               Container(
@@ -83,7 +80,7 @@ class _MyAppState extends State<MyApp> {
                       icon: const Icon(Icons.clear),
                       color: Colors.blue,
                       onPressed: () {
-                        setState(() => _controller.clear());
+                        setState(() => _controller.turnOnOffErase());
                       },
                     ),
                   ],
