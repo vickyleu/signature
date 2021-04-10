@@ -54,8 +54,7 @@ class SignatureState extends State<Signature> {
               minHeight: maxHeight,
               maxWidth: maxWidth,
               maxHeight: maxHeight),
-          child:
-          LayoutBuilder(builder: (context, constraints) {
+          child:LayoutBuilder(builder: (context, constraints) {
             if (!initialized) {
               widget.controller
                   .initializeSize(constraints.maxHeight, constraints.maxWidth);
@@ -73,13 +72,13 @@ class SignatureState extends State<Signature> {
                   var painter = new SignaturePainter(lines: lines, controller: widget.controller);
                   if(initialized){
                     print("widget.controller.paintNotifier==>>${widget.controller.paintNotifier}");
-                    // painter.addListener((){
-                    //   widget.controller.paintNotifier(() {
-                    //     if(mounted){
-                    //       setState(() {});
-                    //     }
-                    //   });
-                    // });
+                    painter.addListener((){
+                      widget.controller.paintNotifier(() {
+                        if(mounted){
+                          setState(() {});
+                        }
+                      });
+                    });
                   }
                   return OnlyOnePointerRecognizerWidget(
                     child: GestureDetector(
@@ -101,12 +100,15 @@ class SignatureState extends State<Signature> {
                         widget.controller.onPanEnd();
                         setState(() {});
                       },
-                      child: CustomPaint(
-                        foregroundPainter: painter,
-                        size: Size.infinite,
-                        child: Container(
-                          color: Colors.transparent,
+                      child: Container(
+                        child: CustomPaint(
+                          foregroundPainter: painter,
+                          size: Size.infinite,
+                          child: Container(
+                            color: Colors.yellow,
+                          ),
                         ),
+                        color: Colors.red,
                       ),
                     ),
                   );

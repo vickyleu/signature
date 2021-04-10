@@ -30,8 +30,7 @@ class GestureWhiteboardController extends WhiteboardController {
   GestureWhiteboardController({WhiteboardDraw? draw}){
     if (draw != null) {
       this.draw = draw.clone();
-      if(this.draw!=null)
-        _streamController.sink.add(this.draw!);
+      refresh();
     }
   }
 
@@ -78,9 +77,7 @@ class GestureWhiteboardController extends WhiteboardController {
         ..add(Point.fromOffset(position));
       lastPan = DateTime.now();
     }
-    if(this.draw!=null){
-      _streamController.sink.add(this.draw!);
-    }
+    refresh();
   }
 
   onPanEnd() {
@@ -92,9 +89,7 @@ class GestureWhiteboardController extends WhiteboardController {
       var secondPoint = new Offset(((this.draw!.lines!.last.points!.last?.x)??0) + 1,
           ((this.draw!.lines!.last.points!.last?.y)??0)+ 1);
       this.draw!.lines!.last.points!.add(Point.fromOffset(secondPoint));
-      if(this.draw!=null){
-        _streamController.sink.add(this.draw!);
-      }
+      refresh();
     }
     if ((this.draw?.lines?.length??0) > 0 && (this.draw!.lines!.last.points?.length??0) == 0) {
       this.draw!.lines!.removeLast();
@@ -102,6 +97,7 @@ class GestureWhiteboardController extends WhiteboardController {
   }
 
   refresh() {
+    print("弄弄弄弄弄弄弄哦");
     if(this.draw!=null){
       _streamController.sink.add(this.draw!);
     }
@@ -109,16 +105,12 @@ class GestureWhiteboardController extends WhiteboardController {
 
   undo() {
     if ((this.draw?.lines?.length??0) > 0) this.draw!.lines!.removeLast();
-    if(this.draw!=null){
-      _streamController.sink.add(this.draw!);
-    }
+    refresh();
   }
 
   wipe() {
     this.draw?.lines?.add(new Line(points: [], wipe: true));
-    if(this.draw!=null){
-      _streamController.sink.add(this.draw!);
-    }
+    refresh();
   }
 
   /// convert canvas to dart:ui Image and then to PNG represented in Uint8List
@@ -223,6 +215,9 @@ class GestureWhiteboardController extends WhiteboardController {
   }
 
   void turnOnOffErase(){
-    erase=!erase;
+   setErase(!erase);
+  }
+  void setErase(bool erase){
+    this.erase=erase;
   }
 }
