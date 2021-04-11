@@ -9,4 +9,4 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  image: ^3.0.0
+  image: any
