@@ -45,8 +45,14 @@ class GestureWhiteboardController extends WhiteboardController {
     return _streamController.close();
   }
 
+  onPanStart(Offset position) {
+    if (this.draw == null) return;
+    // if (_newLine){
+      onPanUpdate(position);
+    // }
+  }
   onPanUpdate(Offset position) {
-
+    print("onPanUpdate  draw===>>>${this.draw}  hashCode::${this.hashCode}");
     if (this.draw == null) return;
 
     if (_newLine) {

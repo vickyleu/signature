@@ -13,13 +13,16 @@ abstract class WhiteboardController {
   double height=0;
 
   WhiteboardDraw? draw;
-
-  initializeSize(double height, double width) {
+  bool initialized=false;
+  void initializeSize(double height, double width) {
+    initialized = true;
     this.width = width;
     this.height = height;
 
-    if (draw == null)
+    if (draw == null){
       draw = new WhiteboardDraw(height: height, width: width, lines: []);
+    }
+      print("draw===>>>${draw}  hashCode::${this.hashCode}");
   }
 
 

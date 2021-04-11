@@ -1,4 +1,3 @@
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -8,6 +7,7 @@ import 'package:signature/signature_painter.dart';
 import 'package:signature/whiteboard_draw.dart';
 
 export 'package:signature/gesture_whiteboard_controller.dart';
+
 /// signature canvas. Controller is required, other parameters are optional.
 /// widget/canvas expands to maximum by default.
 /// this behaviour can be overridden using width and/or height parameters.
@@ -35,9 +35,16 @@ class Signature extends StatefulWidget {
 
 /// signature widget state
 class SignatureState extends State<Signature> {
-  bool initialized = false;
   //drawing tools
-  Size boardSize=Size.zero;
+  Size boardSize = Size.zero;
+
+  @override
+  void initState() {
+    if (!widget.controller.initialized) {
+      widget.controller.initializeSize(widget.height ?? 0, widget.width ?? 0);
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,67 +55,72 @@ class SignatureState extends State<Signature> {
         //NO-OP
       },
       child: Container(
-          decoration: BoxDecoration(color: Colors.white),
+          decoration: BoxDecoration(color: Colors.transparent),
           constraints: BoxConstraints(
               minWidth: maxWidth,
               minHeight: maxHeight,
               maxWidth: maxWidth,
               maxHeight: maxHeight),
-          child:LayoutBuilder(builder: (context, constraints) {
-            if (!initialized) {
-              widget.controller
-                  .initializeSize(constraints.maxHeight, constraints.maxWidth);
-              initialized = true;
-            }
+          child: LayoutBuilder(builder: (context, constraints) {
             boardSize = widget.controller.getSize();
             return StreamBuilder<WhiteboardDraw>(
                 stream: widget.controller.onChange(),
                 builder: (context, snapshot) {
                   List<Line> lines = [];
                   if (snapshot.data?.lines != null) {
-                    snapshot.data!.lines!.forEach((l) => l.wipe ? lines = [] : lines.add(l.clone()));
-                    lines = scaleLines(lines, snapshot.data!.width,snapshot.data!.height, boardSize.width, boardSize.height);
+                    snapshot.data!.lines!.forEach((l) =>
+                    l.wipe
+                        ? lines = []
+                        : lines.add(l.clone()));
+                    lines = scaleLines(
+                        lines, snapshot.data!.width, snapshot.data!.height,
+                        boardSize.width, boardSize.height);
                   }
-                  var painter = new SignaturePainter(lines: lines, controller: widget.controller);
-                  if(initialized){
-                    print("widget.controller.paintNotifier==>>${widget.controller.paintNotifier}");
-                    painter.addListener((){
-                      widget.controller.paintNotifier(() {
-                        if(mounted){
-                          setState(() {});
-                        }
-                      });
+                  var painter = new SignaturePainter(
+                      lines: lines, controller: widget.controller);
+                  painter.addListener(() {
+                    widget.controller.paintNotifier(() {
+                      print("widget.controller.paintNotifier==>>${widget
+                          .controller.paintNotifier}");
+                      if (mounted) {
+                        setState(() {});
+                      }
                     });
-                  }
+                  });
                   return OnlyOnePointerRecognizerWidget(
                     child: GestureDetector(
                       onPanUpdate: (DragUpdateDetails details) {
-                        RenderBox? object = context.findRenderObject() as RenderBox?;
-                        Offset? _localPosition = object?.globalToLocal(details.globalPosition);
-                        if(_localPosition==null)return;
+                        RenderBox? object = context
+                            .findRenderObject() as RenderBox?;
+                        Offset? _localPosition = object?.globalToLocal(
+                            details.globalPosition);
+                        if (_localPosition == null) return;
                         widget.controller.onPanUpdate(_localPosition);
                         setState(() {});
                       },
-                      onVerticalDragUpdate: (DragUpdateDetails details){
-                        RenderBox? object = context.findRenderObject() as RenderBox?;
-                        Offset? _localPosition = object?.globalToLocal(details.globalPosition);
-                        if(_localPosition==null)return;
-                        widget.controller.onPanUpdate(_localPosition);
+                      onVerticalDragUpdate: (DragUpdateDetails details) {
+                        RenderBox? object = context
+                            .findRenderObject() as RenderBox?;
+                        Offset? _localPosition = object?.globalToLocal(
+                            details.globalPosition);
+                        if (_localPosition == null) return;
+                        widget.controller.onPanStart(_localPosition);
+                        setState(() {});
+                      },
+                      onVerticalDragEnd: (DragEndDetails details) {
+                        widget.controller.onPanEnd();
                         setState(() {});
                       },
                       onPanEnd: (DragEndDetails details) {
                         widget.controller.onPanEnd();
                         setState(() {});
                       },
-                      child: Container(
-                        child: CustomPaint(
-                          foregroundPainter: painter,
-                          size: Size.infinite,
-                          child: Container(
-                            color: Colors.yellow,
-                          ),
+                      child: CustomPaint(
+                        foregroundPainter: painter,
+                        size: Size.infinite,
+                        child: Container(
+                          color: Colors.transparent,
                         ),
-                        color: Colors.red,
                       ),
                     ),
                   );
@@ -146,8 +158,10 @@ class SignatureState extends State<Signature> {
     }
 
     return lines
-        .map((line) => line.clone()
-      ..points = line.points?.map((point) => point==null?null:Point(point.x * scale, point.y * scale))
+        .map((line) =>
+    line.clone()
+      ..points = line.points?.map((point) =>
+      point == null ? null : Point(point.x * scale, point.y * scale))
           .toList()
       ..width = line.width * scale)
         .toList();
