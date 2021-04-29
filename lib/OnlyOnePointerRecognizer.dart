@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 
-class OnlyOnePointerRecognizer extends OneSequenceGestureRecognizer {
+class _OnlyOnePointerRecognizer extends OneSequenceGestureRecognizer {
   int _p = 0;
   @override
   void addPointer(PointerDownEvent event) {
@@ -28,17 +28,17 @@ class OnlyOnePointerRecognizer extends OneSequenceGestureRecognizer {
   }
 }
 
-class OnlyOnePointerRecognizerWidget extends StatelessWidget {
+class SignatureOnlyOnePointerRecognizerWidget extends StatelessWidget {
   final Widget? child;
-  OnlyOnePointerRecognizerWidget({this.child});
+  SignatureOnlyOnePointerRecognizerWidget({this.child});
   @override
   Widget build(BuildContext context) {
     return RawGestureDetector(
       gestures: <Type, GestureRecognizerFactory>{
-        OnlyOnePointerRecognizer:
-            GestureRecognizerFactoryWithHandlers<OnlyOnePointerRecognizer>(
-          () => OnlyOnePointerRecognizer(),
-          (OnlyOnePointerRecognizer instance) {},
+        _OnlyOnePointerRecognizer:
+            GestureRecognizerFactoryWithHandlers<_OnlyOnePointerRecognizer>(
+          () => _OnlyOnePointerRecognizer(),
+          (_OnlyOnePointerRecognizer instance) {},
         ),
       },
       child: child,

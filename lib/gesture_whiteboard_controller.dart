@@ -52,9 +52,7 @@ class GestureWhiteboardController extends WhiteboardController {
     // }
   }
   onPanUpdate(Offset position) {
-    print("onPanUpdate  draw===>>>${this.draw}  hashCode::${this.hashCode}");
     if (this.draw == null) return;
-
     if (_newLine) {
       print("_newLine  ${_newLine}");
       this.draw?.lines?.add(new Line(
@@ -65,16 +63,14 @@ class GestureWhiteboardController extends WhiteboardController {
       _newLine = false;
       lastLine = DateTime.now();
     }
-
     if ((this.draw?.lines?.isNotEmpty??false)&&(this.draw?.lines?.last.points?.length??0) > 2 &&
         lastPan != null &&
         (lastPan!.millisecond - DateTime.now().millisecond) < 100) {
       var a1 = position.dx - ((this.draw!.lines!.last.points!.last?.x)??0);
       var a2 = position.dy - ((this.draw!.lines!.last.points!.last?.y)??0);
       var a3 = math.sqrt(math.pow(a1, 2) + math.pow(a2, 2));
-
-      print("a3<5??? ${a3}");
       if (a3 < 5) return;
+      if (a3 > 80) return;
     }
 
     if ((this.draw?.lines?.isEmpty??true)||(this.draw?.lines?.last.points?.length??0) == 0 ||
@@ -103,7 +99,6 @@ class GestureWhiteboardController extends WhiteboardController {
   }
 
   refresh() {
-    print("弄弄弄弄弄弄弄哦");
     if(this.draw!=null){
       _streamController.sink.add(this.draw!);
     }
