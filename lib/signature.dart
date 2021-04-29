@@ -87,40 +87,38 @@ class SignatureState extends State<Signature> {
                       }
                     });
                   });
-                  return OnlyOnePointerRecognizerWidget(
-                    child: GestureDetector(
-                      onPanUpdate: (DragUpdateDetails details) {
-                        RenderBox? object = context
-                            .findRenderObject() as RenderBox?;
-                        Offset? _localPosition = object?.globalToLocal(
-                            details.globalPosition);
-                        if (_localPosition == null) return;
-                        widget.controller.onPanUpdate(_localPosition);
-                        setState(() {});
-                      },
-                      onVerticalDragUpdate: (DragUpdateDetails details) {
-                        RenderBox? object = context
-                            .findRenderObject() as RenderBox?;
-                        Offset? _localPosition = object?.globalToLocal(
-                            details.globalPosition);
-                        if (_localPosition == null) return;
-                        widget.controller.onPanStart(_localPosition);
-                        setState(() {});
-                      },
-                      onVerticalDragEnd: (DragEndDetails details) {
-                        widget.controller.onPanEnd();
-                        setState(() {});
-                      },
-                      onPanEnd: (DragEndDetails details) {
-                        widget.controller.onPanEnd();
-                        setState(() {});
-                      },
-                      child: CustomPaint(
-                        foregroundPainter: painter,
-                        size: Size.infinite,
-                        child: Container(
-                          color: Colors.transparent,
-                        ),
+                  return GestureDetector(
+                    onPanUpdate: (DragUpdateDetails details) {
+                      RenderBox? object = context
+                          .findRenderObject() as RenderBox?;
+                      Offset? _localPosition = object?.globalToLocal(
+                          details.globalPosition);
+                      if (_localPosition == null) return;
+                      widget.controller.onPanUpdate(_localPosition);
+                      setState(() {});
+                    },
+                    onVerticalDragUpdate: (DragUpdateDetails details) {
+                      RenderBox? object = context
+                          .findRenderObject() as RenderBox?;
+                      Offset? _localPosition = object?.globalToLocal(
+                          details.globalPosition);
+                      if (_localPosition == null) return;
+                      widget.controller.onPanStart(_localPosition);
+                      setState(() {});
+                    },
+                    onVerticalDragEnd: (DragEndDetails details) {
+                      widget.controller.onPanEnd();
+                      setState(() {});
+                    },
+                    onPanEnd: (DragEndDetails details) {
+                      widget.controller.onPanEnd();
+                      setState(() {});
+                    },
+                    child: CustomPaint(
+                      foregroundPainter: painter,
+                      size: Size.infinite,
+                      child: Container(
+                        color: Colors.transparent,
                       ),
                     ),
                   );
