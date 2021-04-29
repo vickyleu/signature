@@ -70,7 +70,7 @@ class GestureWhiteboardController extends WhiteboardController {
       var a2 = position.dy - ((this.draw!.lines!.last.points!.last?.y)??0);
       var a3 = math.sqrt(math.pow(a1, 2) + math.pow(a2, 2));
       if (a3 < 5) return;
-      if (a3 > 80) return;
+      // if (a3 > 80) return;
     }
 
     if ((this.draw?.lines?.isEmpty??true)||(this.draw?.lines?.last.points?.length??0) == 0 ||
