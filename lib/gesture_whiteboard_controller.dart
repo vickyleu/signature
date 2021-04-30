@@ -27,6 +27,8 @@ class GestureWhiteboardController extends WhiteboardController {
   bool erase = false;
   double eraserSize = 20.0;
 
+  bool _startTrackGesture=false;
+
   GestureWhiteboardController({WhiteboardDraw? draw}){
     if (draw != null) {
       this.draw = draw.clone();
@@ -62,6 +64,7 @@ class GestureWhiteboardController extends WhiteboardController {
           erase: erase));
       _newLine = false;
       lastLine = DateTime.now();
+      _startTrackGesture=true;
     }
     if ((this.draw?.lines?.isNotEmpty??false)&&(this.draw?.lines?.last.points?.length??0) > 2 &&
         lastPan != null &&
@@ -84,6 +87,10 @@ class GestureWhiteboardController extends WhiteboardController {
 
   onPanEnd() {
     _newLine = true;
+    if(!_startTrackGesture){
+      return;
+    }
+    _startTrackGesture=false;
     this.draw?.lines?.last.duration =
     lastLine==null?0:DateTime.now().difference(lastLine!).inMilliseconds;
 

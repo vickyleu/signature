@@ -13,11 +13,14 @@ export 'package:signature/gesture_whiteboard_controller.dart';
 /// this behaviour can be overridden using width and/or height parameters.
 class Signature extends StatefulWidget {
   /// constructor
+
+
   const Signature({
     required this.controller,
     Key? key,
     this.width,
     this.height,
+    this.disableNotifier,
   }) : super(key: key);
 
   /// signature widget controller
@@ -28,6 +31,8 @@ class Signature extends StatefulWidget {
 
   /// signature widget height
   final double? height;
+
+  final ValueNotifier<bool>? disableNotifier;
 
   @override
   State createState() => SignatureState();
@@ -80,49 +85,72 @@ class SignatureState extends State<Signature> {
                       lines: lines, controller: widget.controller);
                   painter.addListener(() {
                     widget.controller.paintNotifier(() {
-                      print("widget.controller.paintNotifier==>>${widget
-                          .controller.paintNotifier}");
                       if (mounted) {
                         setState(() {});
                       }
                     });
                   });
                   return SignatureOnlyOnePointerRecognizerWidget(
-                    child: GestureDetector(
-                      onPanUpdate: (DragUpdateDetails details) {
-                        RenderBox? object = context
-                            .findRenderObject() as RenderBox?;
-                        Offset? _localPosition = object?.globalToLocal(
-                            details.globalPosition);
-                        if (_localPosition == null) return;
-                        widget.controller.onPanUpdate(_localPosition);
-                        setState(() {});
-                      },
-                      onVerticalDragUpdate: (DragUpdateDetails details) {
-                        RenderBox? object = context
-                            .findRenderObject() as RenderBox?;
-                        Offset? _localPosition = object?.globalToLocal(
-                            details.globalPosition);
-                        if (_localPosition == null) return;
-                        widget.controller.onPanStart(_localPosition);
-                        setState(() {});
-                      },
-                      onVerticalDragEnd: (DragEndDetails details) {
-                        widget.controller.onPanEnd();
-                        setState(() {});
-                      },
-                      onPanEnd: (DragEndDetails details) {
-                        widget.controller.onPanEnd();
-                        setState(() {});
-                      },
-                      child: CustomPaint(
-                        foregroundPainter: painter,
-                        size: Size.infinite,
-                        child: Container(
-                          color: Colors.transparent,
+                      child: Listener(
+                        child: CustomPaint(
+                          foregroundPainter: painter,
+                          size: Size.infinite,
+                          child: Container(
+                            color: Colors.transparent,
+                          ),
                         ),
-                      ),
-                    ),
+                        onPointerCancel: (PointerCancelEvent details){
+                          if(widget.disableNotifier!=null&&widget.disableNotifier!.value){
+                            widget.controller.onPanEnd();
+                            return;
+                          }
+                          widget.controller.onPanEnd();
+                          setState(() {});
+                        },
+                        onPointerUp: (details){
+                          if(widget.disableNotifier!=null&&widget.disableNotifier!.value)return;
+                          widget.controller.onPanEnd();
+                          setState(() {});
+                        },
+                        onPointerMove: (PointerMoveEvent details){
+                          if(widget.disableNotifier!=null&&widget.disableNotifier!.value)return;
+                          RenderBox? object = context
+                              .findRenderObject() as RenderBox?;
+                          Offset? _localPosition = object?.globalToLocal(
+                              details.position);
+                          if (_localPosition == null) return;
+                          widget.controller.onPanUpdate(_localPosition);
+                          setState(() {});
+                        },
+
+                        onPointerDown: (details){
+                          if(widget.disableNotifier!=null&&widget.disableNotifier!.value)return;
+                          RenderBox? object = context
+                              .findRenderObject() as RenderBox?;
+                          Offset? _localPosition = object?.globalToLocal(
+                              details.position);
+                          if (_localPosition == null) return;
+                          widget.controller.onPanStart(_localPosition);
+                          setState(() {});
+                        },
+                      )
+
+                    // GestureDetector(
+                    //   onPanUpdate: (DragUpdateDetails details) {
+                    //
+                    //   },
+                    //   onVerticalDragUpdate: (DragUpdateDetails details) {
+                    //     RenderBox? object = context
+                    //         .findRenderObject() as RenderBox?;
+                    //     Offset? _localPosition = object?.globalToLocal(
+                    //         details.globalPosition);
+                    //     if (_localPosition == null) return;
+                    //     widget.controller.onPanStart(_localPosition);
+                    //     setState(() {});
+                    //   },
+                    //
+                    //   child: ,
+                    // ),
                   );
                 });
           })
