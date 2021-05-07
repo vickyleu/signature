@@ -84,7 +84,15 @@ class GestureWhiteboardController extends WhiteboardController {
     }
     refresh();
   }
-
+  releaseLine(){
+    _newLine = true;
+    if(!_startTrackGesture){
+      return;
+    }
+    _startTrackGesture=false;
+    this.draw!.lines!.removeLast();
+    refresh();
+  }
   onPanEnd() {
     _newLine = true;
     if(!_startTrackGesture){

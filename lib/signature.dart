@@ -101,30 +101,44 @@ class SignatureState extends State<Signature> {
                         ),
                         onPointerCancel: (PointerCancelEvent details){
                           if(widget.disableNotifier!=null&&widget.disableNotifier!.value){
-                            widget.controller.onPanEnd();
+                            // widget.controller.onPanEnd();
+                            widget.controller.releaseLine();
                             return;
                           }
                           widget.controller.onPanEnd();
                           setState(() {});
                         },
                         onPointerUp: (details){
-                          if(widget.disableNotifier!=null&&widget.disableNotifier!.value)return;
+                          if(widget.disableNotifier!=null&&widget.disableNotifier!.value){
+                            // widget.controller.onPanEnd();
+                            widget.controller.releaseLine();
+                            return;
+                          }
                           widget.controller.onPanEnd();
                           setState(() {});
                         },
                         onPointerMove: (PointerMoveEvent details){
-                          if(widget.disableNotifier!=null&&widget.disableNotifier!.value)return;
+                          if(widget.disableNotifier!=null&&widget.disableNotifier!.value){
+                            // widget.controller.onPanEnd();
+                            widget.controller.releaseLine();
+                            return;
+                          }
                           RenderBox? object = context
                               .findRenderObject() as RenderBox?;
                           Offset? _localPosition = object?.globalToLocal(
                               details.position);
                           if (_localPosition == null) return;
+                          print("widget.disableNotifier!.value:::${widget.disableNotifier!.value}");
                           widget.controller.onPanUpdate(_localPosition);
                           setState(() {});
                         },
 
                         onPointerDown: (details){
-                          if(widget.disableNotifier!=null&&widget.disableNotifier!.value)return;
+                          if(widget.disableNotifier!=null&&widget.disableNotifier!.value){
+                            // widget.controller.onPanEnd();
+                            widget.controller.releaseLine();
+                            return;
+                          }
                           RenderBox? object = context
                               .findRenderObject() as RenderBox?;
                           Offset? _localPosition = object?.globalToLocal(
@@ -134,23 +148,6 @@ class SignatureState extends State<Signature> {
                           setState(() {});
                         },
                       )
-
-                    // GestureDetector(
-                    //   onPanUpdate: (DragUpdateDetails details) {
-                    //
-                    //   },
-                    //   onVerticalDragUpdate: (DragUpdateDetails details) {
-                    //     RenderBox? object = context
-                    //         .findRenderObject() as RenderBox?;
-                    //     Offset? _localPosition = object?.globalToLocal(
-                    //         details.globalPosition);
-                    //     if (_localPosition == null) return;
-                    //     widget.controller.onPanStart(_localPosition);
-                    //     setState(() {});
-                    //   },
-                    //
-                    //   child: ,
-                    // ),
                   );
                 });
           })
