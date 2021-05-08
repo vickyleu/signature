@@ -99,16 +99,15 @@ class GestureWhiteboardController extends WhiteboardController {
       return;
     }
     _startTrackGesture=false;
-    this.draw?.lines?.last.duration =
-    lastLine==null?0:DateTime.now().difference(lastLine!).inMilliseconds;
-
-    if ((this.draw?.lines?.isNotEmpty??false)&&this.draw!.lines!.length > 0 && (this.draw!.lines!.last.points?.length??0) == 1) {
-      var secondPoint = new Offset(((this.draw!.lines!.last.points!.last?.x)??0) + 1,
-          ((this.draw!.lines!.last.points!.last?.y)??0)+ 1);
-      this.draw!.lines!.last.points!.add(Point.fromOffset(secondPoint));
+    final lines=this.draw?.lines;
+    lines?.last.duration = lastLine==null?0:DateTime.now().difference(lastLine!).inMilliseconds;
+    if ((lines?.isNotEmpty??false)&&lines!.length > 0 && (lines.last.points?.length??0) == 1) {
+      var secondPoint = new Offset(((lines.last.points!.last?.x)??0) + 1,
+          ((lines.last.points!.last?.y)??0)+ 1);
+      lines.last.points!.add(Point.fromOffset(secondPoint));
       refresh();
     }
-    if ((this.draw?.lines?.length??0) > 0 && (this.draw!.lines!.last.points?.length??0) == 0) {
+    if ((lines?.length??0) > 0 && (lines!.last.points?.length??0) < 4) {
       this.draw!.lines!.removeLast();
     }
   }
