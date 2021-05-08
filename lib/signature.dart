@@ -100,6 +100,7 @@ class SignatureState extends State<Signature> {
                           ),
                         ),
                         onPointerCancel: (PointerCancelEvent details){
+                          print("onPointerCancel${details.toStringShort()}");
                           if(widget.disableNotifier!=null&&widget.disableNotifier!.value){
                             // widget.controller.onPanEnd();
                             widget.controller.releaseLine();
@@ -109,6 +110,7 @@ class SignatureState extends State<Signature> {
                           setState(() {});
                         },
                         onPointerUp: (details){
+                          print("onPointerUp${details.toStringShort()}");
                           if(widget.disableNotifier!=null&&widget.disableNotifier!.value){
                             // widget.controller.onPanEnd();
                             widget.controller.releaseLine();
@@ -118,6 +120,7 @@ class SignatureState extends State<Signature> {
                           setState(() {});
                         },
                         onPointerMove: (PointerMoveEvent details){
+                          print("onPointerMove${details.toStringShort()}");
                           if(widget.disableNotifier!=null&&widget.disableNotifier!.value){
                             // widget.controller.onPanEnd();
                             widget.controller.releaseLine();
@@ -134,6 +137,7 @@ class SignatureState extends State<Signature> {
                         },
 
                         onPointerDown: (details){
+                          print("onPointerDown${details.toStringShort()}");
                           if(widget.disableNotifier!=null&&widget.disableNotifier!.value){
                             // widget.controller.onPanEnd();
                             widget.controller.releaseLine();
